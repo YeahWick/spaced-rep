@@ -197,7 +197,7 @@ const App = (function() {
             startStudySession(params.collectionId);
         } else if (view === 'browse' && params.collectionId) {
             loadBrowseView(params.collectionId);
-        } else if (view === 'edit' && params.cardId) {
+        } else if (view === 'editor' && params.cardId) {
             loadCardEditor(params.cardId);
         }
 
@@ -210,7 +210,7 @@ const App = (function() {
     function goBack() {
         if (state.currentView === 'study' || state.currentView === 'browse') {
             navigateTo('collections');
-        } else if (state.currentView === 'edit') {
+        } else if (state.currentView === 'editor') {
             if (state.currentCollection) {
                 navigateTo('browse', { collectionId: state.currentCollection });
             } else {
@@ -509,7 +509,7 @@ const App = (function() {
             loadCardEditor(cardId);
         }
 
-        navigateTo('edit');
+        navigateTo('editor');
     }
 
     /**
