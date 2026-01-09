@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spaced Repetition Cards</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button id="back-btn" class="btn btn-icon" style="display: none;" aria-label="Go back">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                </button>
+                <h1 class="logo">📚 SpaceRep</h1>
+            </div>
+            <div class="header-right">
+                <button id="settings-btn" class="btn btn-icon" aria-label="Settings">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Collections View -->
+            <section id="collections-view" class="view active">
+                <div class="view-header">
+                    <h2>Collections</h2>
+                    <div class="view-actions">
+                        <button id="import-btn" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+                            Import
+                        </button>
+                        <button id="new-collection-btn" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            New Collection
+                        </button>
+                    </div>
+                </div>
+                <div id="collections-list" class="collections-grid">
+                    <!-- Collections will be rendered here -->
+                </div>
+                <div id="empty-collections" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📚</div>
+                    <h3>No Collections Yet</h3>
+                    <p>Create your first collection to start learning!</p>
+                    <button class="btn btn-primary" onclick="App.showNewCollectionModal()">Create Collection</button>
+                </div>
+            </section>
+
+            <!-- Study View -->
+            <section id="study-view" class="view">
+                <div class="study-header">
+                    <h2 id="study-collection-name">Collection Name</h2>
+                    <div class="study-progress">
+                        <span id="study-progress-text">0 / 0</span>
+                        <div class="progress-bar">
+                            <div id="study-progress-bar" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="study-card" class="study-card">
+                    <div class="card-content" id="card-front">
+                        <div class="card-text"></div>
+                        <div class="card-media"></div>
+                    </div>
+                    <div class="card-content card-back" id="card-back" style="display: none;">
+                        <div class="card-divider"></div>
+                        <div class="card-text"></div>
+                        <div class="card-media"></div>
+                    </div>
+                </div>
+
+                <div id="study-actions" class="study-actions">
+                    <button id="show-answer-btn" class="btn btn-primary btn-large">Show Answer</button>
+                    <div id="rating-buttons" class="rating-buttons" style="display: none;">
+                        <button class="btn btn-rating btn-again" data-quality="0">
+                            <span class="rating-label">Again</span>
+                            <span class="rating-time" id="time-again"></span>
+                        </button>
+                        <button class="btn btn-rating btn-hard" data-quality="1">
+                            <span class="rating-label">Hard</span>
+                            <span class="rating-time" id="time-hard"></span>
+                        </button>
+                        <button class="btn btn-rating btn-good" data-quality="2">
+                            <span class="rating-label">Good</span>
+                            <span class="rating-time" id="time-good"></span>
+                        </button>
+                        <button class="btn btn-rating btn-easy" data-quality="3">
+                            <span class="rating-label">Easy</span>
+                            <span class="rating-time" id="time-easy"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="study-complete" class="study-complete" style="display: none;">
+                    <div class="complete-icon">🎉</div>
+                    <h3>Session Complete!</h3>
+                    <div class="study-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="stat-reviewed">0</span>
+                            <span class="stat-label">Reviewed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="stat-correct">0</span>
+                            <span class="stat-label">Correct</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="stat-time">0m</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="App.navigateTo('collections')">Back to Collections</button>
+                </div>
+            </section>
+
+            <!-- Card Editor View -->
+            <section id="editor-view" class="view">
+                <div class="editor-header">
+                    <h2 id="editor-title">New Card</h2>
+                </div>
+                <form id="card-form" class="card-form">
+                    <input type="hidden" id="card-id">
+                    <input type="hidden" id="card-collection-id">
+
+                    <div class="form-section">
+                        <label class="form-label">Front (Question)</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="btn btn-icon btn-small" onclick="Media.addImage('front')" title="Add Image">
+                                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                            </button>
+                            <button type="button" class="btn btn-icon btn-small" id="record-front-btn" onclick="Media.toggleRecording('front')" title="Record Audio">
+                                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+                            </button>
+                        </div>
+                        <textarea id="front-text" class="form-textarea" placeholder="Enter the question or prompt..." required></textarea>
+                        <div id="front-media" class="media-preview"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <label class="form-label">Back (Answer)</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="btn btn-icon btn-small" onclick="Media.addImage('back')" title="Add Image">
+                                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                            </button>
+                            <button type="button" class="btn btn-icon btn-small" id="record-back-btn" onclick="Media.toggleRecording('back')" title="Record Audio">
+                                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+                            </button>
+                        </div>
+                        <textarea id="back-text" class="form-textarea" placeholder="Enter the answer..." required></textarea>
+                        <div id="back-media" class="media-preview"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <label class="form-label">Tags (optional)</label>
+                        <input type="text" id="card-tags" class="form-input" placeholder="Enter tags separated by commas...">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="App.cancelEdit()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Card</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Browse Cards View -->
+            <section id="browse-view" class="view">
+                <div class="view-header">
+                    <h2 id="browse-collection-name">Cards</h2>
+                    <div class="view-actions">
+                        <button id="new-card-btn" class="btn btn-primary" onclick="App.showCardEditor()">
+                            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            New Card
+                        </button>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="search-cards" class="form-input" placeholder="Search cards...">
+                </div>
+                <div id="cards-list" class="cards-list">
+                    <!-- Cards will be rendered here -->
+                </div>
+                <div id="empty-cards" class="empty-state" style="display: none;">
+                    <div class="empty-icon">🃏</div>
+                    <h3>No Cards Yet</h3>
+                    <p>Add your first card to start learning!</p>
+                    <button class="btn btn-primary" onclick="App.showCardEditor()">Add Card</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modals -->
+        <div id="modal-overlay" class="modal-overlay" style="display: none;">
+            <!-- New Collection Modal -->
+            <div id="new-collection-modal" class="modal" style="display: none;">
+                <div class="modal-header">
+                    <h3>New Collection</h3>
+                    <button class="btn btn-icon" onclick="App.closeModal()">&times;</button>
+                </div>
+                <form id="new-collection-form" onsubmit="App.createCollection(event)">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="collection-name">Name</label>
+                            <input type="text" id="collection-name" class="form-input" required placeholder="e.g., Spanish Vocabulary">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="collection-desc">Description (optional)</label>
+                            <textarea id="collection-desc" class="form-textarea" placeholder="What will you learn?"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Settings Modal -->
+            <div id="settings-modal" class="modal" style="display: none;">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="btn btn-icon" onclick="App.closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Theme</label>
+                        <select id="setting-theme" class="form-select" onchange="App.updateSetting('theme', this.value)">
+                            <option value="system">System</option>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Cards per Day (default)</label>
+                        <input type="number" id="setting-new-cards" class="form-input" min="1" max="100" value="20" onchange="App.updateSetting('defaultNewCardsPerDay', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reviews per Day (default)</label>
+                        <input type="number" id="setting-reviews" class="form-input" min="1" max="1000" value="200" onchange="App.updateSetting('defaultReviewsPerDay', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-check">
+                            <input type="checkbox" id="setting-auto-play" onchange="App.updateSetting('autoPlayAudio', this.checked)">
+                            <span>Auto-play audio</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-check">
+                            <input type="checkbox" id="setting-shortcuts" checked onchange="App.updateSetting('keyboardShortcuts', this.checked)">
+                            <span>Enable keyboard shortcuts</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="App.closeModal()">Done</button>
+                </div>
+            </div>
+
+            <!-- Confirm Delete Modal -->
+            <div id="confirm-modal" class="modal" style="display: none;">
+                <div class="modal-header">
+                    <h3 id="confirm-title">Confirm</h3>
+                    <button class="btn btn-icon" onclick="App.closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message">Are you sure?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="App.closeModal()">Cancel</button>
+                    <button id="confirm-action-btn" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+
+            <!-- Collection Options Modal -->
+            <div id="collection-options-modal" class="modal modal-small" style="display: none;">
+                <div class="modal-body options-list">
+                    <button class="option-btn" onclick="App.studyCollection()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                        Study Now
+                    </button>
+                    <button class="option-btn" onclick="App.browseCollection()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M4 6h18V4H4c-1.1 0-2 .9-2 2v11H0v3h14v-3H4V6zm19 2h-6c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-1 9h-4v-7h4v7z"/></svg>
+                        Browse Cards
+                    </button>
+                    <button class="option-btn" onclick="App.exportCollection()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Export
+                    </button>
+                    <button class="option-btn" onclick="App.editCollectionName()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        Rename
+                    </button>
+                    <button class="option-btn option-danger" onclick="App.deleteCollection()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden file input for imports -->
+        <input type="file" id="import-file" accept=".srep,.json" style="display: none;">
+        <input type="file" id="image-file" accept="image/*" style="display: none;">
+        <input type="file" id="audio-file" accept="audio/*" style="display: none;">
+
+        <!-- Notification container -->
+        <div id="notifications" class="notifications"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/sr-algorithm.js"></script>
+    <script src="js/media.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
