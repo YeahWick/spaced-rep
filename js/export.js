@@ -6,7 +6,7 @@
 const Export = (function() {
     const FORMAT_VERSION = '1.0';
     const APP_VERSION = '1.0.0';
-    const FILE_EXTENSION = '.srep';
+    const FILE_EXTENSION = '.json';
 
     /**
      * Export a collection as a downloadable file
